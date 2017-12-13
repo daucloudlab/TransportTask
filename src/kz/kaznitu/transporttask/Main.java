@@ -158,103 +158,172 @@ public class Main {
         }
 
         // Найти U и  V, положив их сначала на равными 0
-        for (int i = 0; i < M; i++){
-            IU[i] = 0 ;
-            U[i] =  0 ;
+        for (int i = 0; i < M; i++) {
+            IU[i] = 0;
+            U[i] = 0;
         }
-        for(int j = 0; j < N; j++){
-            IV[j] = 0 ;
-            V[j] = 0 ;
+        for (int j = 0; j < N; j++) {
+            IV[j] = 0;
+            V[j] = 0;
         }
 
         // Найти строку с наибольшей базисной переменной
         // например строку L
-        int T = 0, L = 0 ;
-        for (int i = 0; i < M; i++){
-            if (TR[i] > T){
-                T = TR[i] ;
-                L = i ;
-            }
-        }
+//        int T = 0, L = 0 ;
+//        for (int i = 0; i < M; i++){
+//            if (TR[i] > T){
+//                T = TR[i] ;
+//                L = i ;
+//            }
+//        }
 
-        U[L] = 0;
-        IU[L] = 1 ;
-        c = 0 ;
-        cr = 1 ;
-        ct = 0 ;
-        for (int j = 0; j < N; j++){
-            if (IX[L][j] != 0){
-                V[j] = C[L][j] ;
+//        U[L] = 0;
+//        IU[L] = 1 ;
+//        c = 0 ;
+//        cr = 1 ;
+//        ct = 0 ;
+//        for (int j = 0; j < N; j++){
+//            if (IX[L][j] != 0){
+//                V[j] = C[L][j] ;
+//                System.out.println("V[" + j + "] = " + V[j]);
+//                IV[j] = 1 ;
+//                ct = ct + 1 ;
+//                c = c + 1 ;
+//            }
+//        }
+        U[0] = 0;
+        IU[0] = 1;
+        c = 1;
+        cr = 1;
+        ct = 0;
+        for (int j = 0; j < N; j++) {
+            if (IX[0][j] != 0) {
+                V[j] = C[0][j];
                 System.out.println("V[" + j + "] = " + V[j]);
-                IV[j] = 1 ;
-                ct = ct + 1 ;
-                c = c + 1 ;
+                IV[j] = 1;
+                ct = ct + 1;
+                c = c + 1;
             }
         }
 
-        // Обработать базисные переменные в помеченных строках
-        // или помеченных столбцах
         do {
             for (int i = 0; i < M; i++) {
                 for (int j = 0; j < N; j++) {
-                    if (IX[i][j] != 0) {    // Если эта базисная переменная
-                                if (IU[i] == 0 && IV[j] == 1) { // если U не найден, но V есть
-                                    U[i] = C[i][j] - V[j];
-                                    System.out.println("U[" + i + "] = " + U[i]);
-                                    IU[i] = 1;
-                                    cr = cr + 1;
-                                    c = c + 1;
-                                } else {    // если V не найден, но U есть
-                                    V[j] = C[i][j] - U[i];
-                                    System.out.println("V[" + j + "] = " + V[j]);
-                                    IV[j] = 1;
-                                    ct = ct + 1;
-                                    c = c + 1;
-                                }
-                            }
-
-                } // Если базисная переменная
+                    if (IX[i][j] != 0) {
+                        if (IU[i] == 0 && IV[j] == 1) {
+                            U[i] = C[i][j] - V[j];
+                            System.out.println("U[" + i + "] = " + U[i]);
+                            IU[i] = 1;
+                            cr = cr + 1;
+                            c = c + 1;
+                        } else if (IU[i] == 1 && IV[j] == 0) {
+                            V[j] = C[i][j] - U[i];
+                            System.out.println("V[" + j + "] = " + V[j]);
+                            IV[j] = 1;
+                            ct = ct + 1;
+                            c = c + 1;
+                        }
+                    }
+                }
             }
 
-        } while (c != M + N && c < M+N); // Проверить все ли строки и столбцы были помечены
+        } while (c != M + N && c < M + N);
 
-        System.out.println("U[i]");
-        for (int i = 0; i < M; i++){
-            System.out.print(U[i] + "  ");
-        }
-        System.out.println("V[j]");
-        for (int j = 0; j < N; j++){
-            System.out.print(V[j] + "  ");
-        }
-
-        // Вычисление D[i][j]
-        for (int i = 0; i < M; i++){
-            for(int j = 0; j < N; j++){
-                if (IX[i][j] != 0){
-                    D[i][j] = C[i][j] - U[i] - V[j] ;
-                    if (D[i][j] != 0)
-                        System.out.println("ОШИБКА 1");
-                }else{
-                    D[i][j] = C[i][j] - U[i] - V[j] ;
+        //Вычисление D[ i][j]
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                if (IX[i][j] == 0) {
+                    D[i][j] = C[i][j] - U[i] - V[j];
                 }
             }
         }
 
-        // Найти наименьший элемент в массиве D[i][j]
-        T = 0 ;
-        int K = 0;
-        L = 0 ;
         for (int i = 0; i < M; i++){
-            for(int j = 0; j < N; j++){
-                if (IX[i][j] != 1){
-                    if (D[i][j] <= T){
-                        T = D[i][j] ;
-                        K = i ;
-                        L = j ;
+            for (int j = 0; j < N; j++){
+                System.out.print(D[i][j] + "   ");
+            }
+            System.out.println();
+        }
+        // Находим наименьший D[i][j3] и индекс K,L
+        int T = 0;
+        int K = 0;
+        int L = 0;
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                if (IX[i][j] != 1) {
+                    if (D[i][j] <= T) {
+                        T = D[i][j];
+                        K = i;
+                        L = j;
                     }
                 }
             }
         }
+        System.out.println("K,L = " + K +", " +L);
+//
+//        // Обработать базисные переменные в помеченных строках
+//        // или помеченных столбцах
+//        do {
+//            for (int i = 0; i < M; i++) {
+//                for (int j = 0; j < N; j++) {
+//                    if (IX[i][j] != 0) {    // Если эта базисная переменная
+//                                if (IU[i] == 0 && IV[j] == 1) { // если U не найден, но V есть
+//                                    U[i] = C[i][j] - V[j];
+//                                    System.out.println("U[" + i + "] = " + U[i]);
+//                                    IU[i] = 1;
+//                                    cr = cr + 1;
+//                                    c = c + 1;
+//                                } else {    // если V не найден, но U есть
+//                                    V[j] = C[i][j] - U[i];
+//                                    System.out.println("V[" + j + "] = " + V[j]);
+//                                    IV[j] = 1;
+//                                    ct = ct + 1;
+//                                    c = c + 1;
+//                                }
+//                            }
+//
+//                } // Если базисная переменная
+//            }
+//
+//        } while (c != M + N && c < M+N); // Проверить все ли строки и столбцы были помечены
+//
+//        System.out.println("U[i]");
+//        for (int i = 0; i < M; i++){
+//            System.out.print(U[i] + "  ");
+//        }
+//        System.out.println("V[j]");
+//        for (int j = 0; j < N; j++){
+//            System.out.print(V[j] + "  ");
+//        }
+//
+//        // Вычисление D[i][j]
+//        for (int i = 0; i < M; i++){
+//            for(int j = 0; j < N; j++){
+//                if (IX[i][j] != 0){
+//                    D[i][j] = C[i][j] - U[i] - V[j] ;
+//                    if (D[i][j] != 0)
+//                        System.out.println("ОШИБКА 1");
+//                }else{
+//                    D[i][j] = C[i][j] - U[i] - V[j] ;
+//                }
+//            }
+//        }
+//
+//        // Найти наименьший элемент в массиве D[i][j]
+//        T = 0 ;
+//        int K = 0;
+//        L = 0 ;
+//        for (int i = 0; i < M; i++){
+//            for(int j = 0; j < N; j++){
+//                if (IX[i][j] != 1){
+//                    if (D[i][j] <= T){
+//                        T = D[i][j] ;
+//                        K = i ;
+//                        L = j ;
+//                    }
+//                }
+//            }
+//        }
         // Если T все еще больше 0, то все D[i][j] положительны
         // и данное решение оптимально
 
